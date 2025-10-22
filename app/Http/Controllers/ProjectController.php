@@ -42,11 +42,10 @@ class ProjectController extends Controller
     public function show($slug)
     {
         $project = Project::where('slug', $slug)
-            ->with(['updates' => function ($query) {
+            ->with(['projectUpdates' => function ($query) {
                 $query->latest();
             }])
             ->firstOrFail();
-
 
         $totalTrees = $project->donations()->where('status', 'paid')->sum('tree_quantity');
         $co2AbsorptionPerYear = $totalTrees * 25;

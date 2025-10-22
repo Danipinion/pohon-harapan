@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Donation;
 use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Midtrans\Config;
-use Midtrans\Snap;
 
 class DonationController extends Controller
 {
@@ -28,7 +25,7 @@ class DonationController extends Controller
 
 
         $donation = Donation::create([
-            'user_id' => auth()->id() ?? null,
+            'user_id' => null,
             'project_id' => $request->project_id,
             'donor_name' => $request->name,
             'donor_email' => $request->email,
@@ -37,7 +34,6 @@ class DonationController extends Controller
             'status' => 'pending',
         ]);
 
-        // Alihkan ke halaman instruksi pembayaran, bukan checkout
         return redirect()->route('donations.instructions', $donation->id)
             ->with('success', 'Data donasi berhasil dibuat. Silakan selesaikan pembayaran.');
     }
@@ -47,33 +43,8 @@ class DonationController extends Controller
         return view('donations.checkout', compact('donation'));
     }
 
-    public function handleWebhook(Request $request)
-    {
-        $payload = $request->all();
-        $orderId = $payload['order_id'];
-        $statusCode = $payload['status_code'];
-        $grossAmount = $payload['gross_amount'];
-        $signatureKey = hash('sha512', $orderId . $statusCode . $grossAmount . config('services.midtrans.server_key'));
-
-        if ($payload['signature_key'] !== $signatureKey) {
-            return response()->json(['message' => 'Invalid signature'], 403);
-        }
-
-        $donationId = explode('-', $orderId)[1];
-        $donation = Donation::findOrFail($donationId);
-
-        if ($payload['transaction_status'] == 'capture' || $payload['transaction_status'] == 'settlement') {
-            $donation->update(['status' => 'paid']);
-        } elseif ($payload['transaction_status'] == 'expire' || $payload['transaction_status'] == 'cancel' || $payload['transaction_status'] == 'deny') {
-            $donation->update(['status' => 'failed']);
-        }
-
-        return response()->json(['message' => 'Webhook received successfully']);
-    }
-
     public function instructions(Donation $donation)
     {
-        // Pastikan hanya donasi yang pending yang bisa diakses
         if ($donation->status !== 'pending') {
             return redirect('/')->with('error', 'Halaman ini sudah tidak valid.');
         }

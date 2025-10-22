@@ -17,7 +17,3 @@ Route::post('/donations', [DonationController::class, 'store'])->name('donations
 Route::get('/donations/{donation}/checkout', [DonationController::class, 'checkout'])->name('donations.checkout');
 Route::get('/donations/{donation}/instructions', [DonationController::class, 'instructions'])->name('donations.instructions');
 Route::post('/donations/{donation}/upload-proof', [DonationController::class, 'uploadProof'])->name('donations.uploadProof');
-
-// Webhook untuk Notifikasi Pembayaran (dari Midtrans)
-// Pastikan untuk menambahkan route ini ke dalam array 'except' di VerifyCsrfToken middleware
-Route::post('/midtrans/webhook', [DonationController::class, 'handleWebhook'])->name('midtrans.webhook');

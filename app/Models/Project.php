@@ -42,8 +42,8 @@ class Project extends Model
         return $this->hasMany(Donation::class);
     }
 
-    public function updates()
+    public function projectUpdates()
     {
-        return $this->hasMany(ProjectUpdate::class);
+        return $this->hasMany(ProjectUpdate::class)->latest();
     }
 }

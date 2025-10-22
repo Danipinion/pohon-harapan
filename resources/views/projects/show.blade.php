@@ -63,6 +63,72 @@
                             @endforelse
                         </ol>
                     </div>
+
+                    <div x-data="{
+                        showModal: false,
+                        modalTitle: '',
+                        modalDate: '',
+                        modalDescription: ''
+                    }" class="mt-16">
+
+                        <h3 class="text-3xl font-bold mb-6 text-gray-800">Pembaruan Proyek</h3>
+
+                        <div class="mt-6 space-y-4">
+                            @forelse($project->projectUpdates as $update)
+                                <div
+                                    class="flex items-center justify-between p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                                    <div>
+                                        <h4 class="text-lg font-bold text-gray-900">{{ $update->title }}</h4>
+                                        <p class="mt-1 text-sm text-gray-500">
+                                            {{ $update->created_at->translatedFormat('d F Y') }}
+                                        </p>
+                                    </div>
+                                    <button
+                                        @click="
+                                            showModal = true;
+                                            modalTitle = @js($update->title);
+                                            modalDate = @js($update->created_at->translatedFormat('d F Y \p\u\k\u\l H:i'));
+                                            modalDescription = @js($update->content);
+                                        "
+                                        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition">
+                                        Lihat
+                                    </button>
+                                </div>
+                            @empty
+                                <div class="p-6 text-center bg-white border border-gray-200 rounded-lg">
+                                    <p class="text-gray-500">Belum ada pembaruan untuk proyek ini.</p>
+                                </div>
+                            @endforelse
+                        </div>
+
+                        <div x-show="showModal" x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60"
+                            style="display: none;">
+
+                            <div @click.outside="showModal = false"
+                                class="w-full max-w-2xl bg-white rounded-lg shadow-xl flex flex-col max-h-[90vh]">
+
+                                <div class="p-5 border-b flex-shrink-0">
+                                    <h3 class="text-xl font-semibold text-gray-900 text-center" x-text="modalTitle">
+                                    </h3>
+                                </div>
+                                <div class="p-6 overflow-y-auto">
+                                    <p class="mb-4 text-sm text-gray-500" x-text="'Dipublikasikan pada ' + modalDate"></p>
+                                    <div class="prose prose-lg text-gray-600 max-w-none" x-html="modalDescription"></div>
+                                </div>
+
+                                <div class="px-6 py-4 bg-gray-50 text-right flex-shrink-0">
+                                    <button @click="showModal = false"
+                                        class="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                                        Tutup
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="lg:col-span-1">
@@ -85,7 +151,7 @@
                             </div>
                         </div>
                         <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 text-sm">
-                            <h4 class="font-bold text-green-800">Dampak Iklim (SDG 13)</h4>
+                            <h4 class="font-bold text-green-800">Dampak Iklim</h4>
                             <p class="text-green-700">Donasi terkumpul berpotensi menyerap <strong
                                     class="font-extrabold">{{ number_format($co2AbsorptionPerYear, 0, ',', '.') }} kg
                                     CO₂</strong> per tahun.</p>

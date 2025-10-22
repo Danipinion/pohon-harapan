@@ -13,7 +13,6 @@ class ProjectUpdate extends Model
         'project_id',
         'title',
         'content',
-        'image_url',
     ];
 
     public function project()

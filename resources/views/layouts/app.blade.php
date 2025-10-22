@@ -8,8 +8,8 @@
     <link rel="icon" type="image/jpg" href="{{ asset('images/logo.jpg') }}">
 
     {{-- Tailwind CSS --}}
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.19/src/index.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -104,7 +104,7 @@
                     <h3 class="font-bold text-2xl text-white mb-4">PohonHarapan</h3>
                     <p class="text-gray-400 max-w-md">
                         Sebuah gerakan kolektif untuk restorasi hutan dan pemberdayaan komunitas melalui donasi pohon,
-                        sejalan dengan Tujuan Pembangunan Berkelanjutan (SDGs).
+                        sejalan dengan Tujuan Pembangunan Berkelanjutan.
                     </p>
                 </div>
 
@@ -146,8 +146,7 @@
             </div>
 
             <div class="mt-12 border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
-                <p>&copy; {{ date('Y') }} PohonHarapan. Selaras dengan SDGs 13 (Climate Action) & 15 (Life on
-                    Land).</p>
+                <p>&copy; {{ date('Y') }} PohonHarapan. All rights reserved.</p>
             </div>
         </div>
     </footer>
