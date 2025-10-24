@@ -28,6 +28,19 @@
                 dan nantikan program kami selanjutnya.</p>
         </div>
 
+        <div class="mt-12 max-w-xl mx-auto">
+            <form action="{{ route('projects.index') }}" method="GET"
+                class="flex items-center shadow rounded-lg overflow-hidden">
+                <input type="text" name="search" value="{{ $search ?? '' }}"
+                    placeholder="Cari proyek berdasarkan judul atau lokasi..."
+                    class="w-full px-5 py-4 text-gray-700 border-0 focus:outline-none focus:ring-2 focus:ring-green-500">
+                <button type="submit"
+                    class="px-6 py-4 bg-green-600 text-white font-bold hover:bg-green-700 focus:outline-none transition-colors">
+                    Cari
+                </button>
+            </form>
+        </div>
+
         <div class="mt-16">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Proyek Sedang Berjalan</h2>
             <div class="swiper active-projects-swiper relative">
@@ -85,38 +98,38 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Opsi umum untuk semua carousel
+
             const swiperOptions = {
-                loop: true, // Kembali ke awal setelah slide terakhir
+                loop: true,
                 grabCursor: true,
-                spaceBetween: 32, // Jarak antar slide
-                // Tampilkan 1 slide di mobile, 2 di tablet, 3 di desktop
+                spaceBetween: 32,
+
                 slidesPerView: 1,
                 breakpoints: {
-                    768: { // md
+                    768: {
                         slidesPerView: 2,
                     },
-                    1024: { // lg
+                    1024: {
                         slidesPerView: 3,
                     }
                 },
-                // Tombol Navigasi
+
                 navigation: {
                     nextEl: '.swiper-button-next',
                     prevEl: '.swiper-button-prev',
                 },
             };
 
-            // Inisialisasi Carousel untuk Proyek Aktif
+
             const activeSwiper = new Swiper('.active-projects-swiper', {
                 ...swiperOptions,
-                navigation: { // Gunakan selector yang lebih spesifik jika perlu
+                navigation: {
                     nextEl: '.active-projects-swiper .swiper-button-next',
                     prevEl: '.active-projects-swiper .swiper-button-prev',
                 }
             });
 
-            // Inisialisasi Carousel untuk Proyek Selesai
+
             const completedSwiper = new Swiper('.completed-projects-swiper', {
                 ...swiperOptions,
                 navigation: {
@@ -125,7 +138,7 @@
                 }
             });
 
-            // Inisialisasi Carousel untuk Proyek Mendatang
+
             const pendingSwiper = new Swiper('.pending-projects-swiper', {
                 ...swiperOptions,
                 navigation: {

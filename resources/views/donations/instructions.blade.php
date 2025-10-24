@@ -89,8 +89,10 @@
                                 enctype="multipart/form-data" class="mt-4">
                                 @csrf
                                 <label for="payment_proof_input"
-                                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 relative overflow-hidden">
+
+                                    <div id="placeholder-content"
+                                        class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                                         <svg class="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -99,10 +101,14 @@
                                         </svg>
                                         <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk
                                                 memilih</span> atau seret file</p>
-                                        <p class="text-xs text-gray-500">PNG, JPG, atau PDF (MAX. 2MB)</p>
+                                        <p class="text-xs text-gray-500">PNG atau JPG (MAX. 2MB)</p>
                                     </div>
+
+                                    <img id="image-preview" src="" alt="Preview Bukti Pembayaran"
+                                        class="absolute inset-0 w-full h-full object-cover hidden">
+
                                     <input id="payment_proof_input" name="payment_proof" type="file" class="hidden"
-                                        required />
+                                        required accept="image/png, image/jpeg" />
                                 </label>
                                 <p id="file-name" class="text-center text-sm mt-2 text-gray-600"></p>
 
@@ -122,7 +128,6 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Fungsionalitas Tombol Salin Nomor Rekening
             const copyBtn = document.getElementById('copy-btn');
             const accountNumber = document.getElementById('account-number').innerText;
 
@@ -131,23 +136,46 @@
                     copyBtn.innerText = 'Disalin!';
                     setTimeout(() => {
                         copyBtn.innerText = 'Salin';
-                    }, 2000); // Kembali ke teks semula setelah 2 detik
+                    }, 2000);
                 }).catch(err => {
                     console.error('Gagal menyalin:', err);
                 });
             });
 
-            // 2. Fungsionalitas Input File Kustom
             const fileInput = document.getElementById('payment_proof_input');
             const fileNameDisplay = document.getElementById('file-name');
+            const imagePreview = document.getElementById('image-preview');
+            const placeholderContent = document.getElementById('placeholder-content');
 
             if (fileInput) {
                 fileInput.addEventListener('change', function() {
                     if (this.files && this.files.length > 0) {
-                        // Tampilkan nama file yang dipilih
-                        fileNameDisplay.innerText = `File terpilih: ${this.files[0].name}`;
+                        const file = this.files[0];
+                        fileNameDisplay.innerText = `File terpilih: ${file.name}`;
+
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+
+                            reader.onload = function(e) {
+                                imagePreview.src = e.target.result;
+                                imagePreview.classList.remove('hidden');
+                                placeholderContent.classList.add('hidden');
+                            }
+
+                            reader.readAsDataURL(file);
+                        } else {
+                            imagePreview.src = '';
+                            imagePreview.classList.add('hidden');
+                            placeholderContent.classList.remove('hidden');
+                            fileNameDisplay.innerText = 'File harus berupa gambar (PNG, JPG)';
+                            fileInput.value = '';
+                        }
+
                     } else {
                         fileNameDisplay.innerText = '';
+                        imagePreview.src = '';
+                        imagePreview.classList.add('hidden');
+                        placeholderContent.classList.remove('hidden');
                     }
                 });
             }

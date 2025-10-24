@@ -239,7 +239,7 @@
             const amountDisplay = document.getElementById('amount_display');
             const amountHidden = document.getElementById('amount');
 
-            // Konfigurasi IMask untuk format Rupiah
+
             const currencyMask = IMask(amountDisplay, {
                 mask: Number,
                 min: 10000,
@@ -247,17 +247,17 @@
                 thousandsSeparator: '.'
             });
 
-            // Setiap kali nilai di input yang terlihat berubah, update nilai di input tersembunyi
+
             currencyMask.on('accept', function() {
                 amountHidden.value = currencyMask.unmaskedValue;
             });
 
-            // Fungsionalitas untuk tombol pilihan nominal
+
             const presetButtons = document.querySelectorAll('.donation-preset');
             presetButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const amount = this.dataset.amount;
-                    // Update nilai di mask, yang otomatis akan memicu event 'accept'
+
                     currencyMask.value = amount;
                 });
             });

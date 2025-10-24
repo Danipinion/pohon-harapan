@@ -7,30 +7,59 @@
     <title>PohonHarapan</title>
     <link rel="icon" type="image/jpg" href="{{ asset('images/logo.jpg') }}">
 
-    {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.19/src/index.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <style>
-        /* Style untuk navbar saat di-scroll */
         .navbar-scrolled {
             background-color: white;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
-        /* Style untuk link yang aktif */
         .nav-link-active {
             color: #16a34a;
-            /* text-green-600 */
             font-weight: 600;
         }
     </style>
-    @stack('styles') {{-- Mengganti @stack('head') agar lebih spesifik --}}
+
+    @push('styles')
+        <style>
+            #page-loader {
+                opacity: 1;
+                filter: blur(0px);
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 100;
+            }
+
+            #page-loader.is-loaded {
+                opacity: 0;
+                filter: blur(30px);
+                pointer-events: none;
+            }
+
+            #page-loader.is-leaving {
+                transition: none;
+                opacity: 0;
+                filter: blur(30px);
+            }
+
+            #progress-bar {}
+        </style>
+    @endpush
+    @stack('styles')
 </head>
 
 <body class="bg-gray-50 text-gray-800 antialiased">
+    <div id="page-loader" class="fixed inset-0 z-[100] flex items-center justify-center bg-green-600">
+        <div class="w-full max-w-xs text-center">
+            <div id="progress-text" class="text-4xl font-bold text-white mb-3" style="font-family: monospace;">0%</div>
+            <div id="progress-bar-container" class="w-full bg-white/20 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-white h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
     <nav x-data="{ open: false, scrolled: false }" @scroll.window="scrolled = (window.scrollY > 50)"
         :class="{ 'navbar-scrolled text-gray-800': scrolled, 'text-white': !scrolled }"
         class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
@@ -49,7 +78,7 @@
                     class="py-2 transition-colors duration-300 hover:text-green-500 {{ request()->routeIs('projects.*') ? 'nav-link-active' : '' }}">Proyek</a>
                 <a href="{{ route('about') }}" class="py-2 transition-colors duration-300 hover:text-green-500">Tentang
                     Kami</a>
-                <a href="{{ route('projects.index') }}"
+                <a href="{{ route('donations.random') }}"
                     :class="{
                         'bg-white text-green-700 hover:bg-gray-200': scrolled,
                         'bg-green-500 hover:bg-green-400': !
@@ -84,7 +113,7 @@
                 class="block px-6 py-3 hover:bg-gray-100 {{ request()->routeIs('projects.*') ? 'nav-link-active' : '' }}">Proyek</a>
             <a href="{{ route('about') }}" class="block px-6 py-3 hover:bg-gray-100">Tentang Kami</a>
             <div class="px-6 py-4">
-                <a href="{{ route('projects.index') }}"
+                <a href="{{ route('donations.random') }}"
                     class="block text-center w-full bg-green-600 text-white font-bold py-2 px-5 rounded-full hover:bg-green-700 transition duration-300">
                     Donasi Sekarang
                 </a>
@@ -96,7 +125,7 @@
         @yield('content')
     </main>
 
-    {{-- FOOTER MODERN --}}
+
     <footer class="bg-gray-900 text-gray-300 pt-16 pb-8">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -152,6 +181,123 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     @stack('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loader = document.getElementById('page-loader');
+            const progressText = document.getElementById('progress-text');
+            const progressBar = document.getElementById('progress-bar');
+
+            const animationHalfDuration = 250;
+            const fadeDuration = 500;
+            const pauseBeforeAction = 100;
+            const progressTransition = 'width 0.05s linear';
+
+
+            function runProgressAnimation(startPercent, endPercent, onComplete) {
+                let progress = startPercent;
+                const totalSteps = endPercent - startPercent;
+                if (totalSteps <= 0) {
+                    if (onComplete) onComplete();
+                    return;
+                }
+
+                const intervalTime = animationHalfDuration / totalSteps;
+
+
+                if (progressText) progressText.innerText = `${progress}%`;
+                if (progressBar) {
+                    progressBar.style.transition = progressTransition;
+                    progressBar.style.width = `${progress}%`;
+                }
+
+                const interval = setInterval(() => {
+                    progress++;
+                    if (progressText) progressText.innerText = `${progress}%`;
+                    if (progressBar) progressBar.style.width = `${progress}%`;
+
+                    if (progress >= endPercent) {
+                        clearInterval(interval);
+                        if (onComplete) {
+                            setTimeout(onComplete, pauseBeforeAction);
+                        }
+                    }
+                }, intervalTime);
+            }
+
+            if (progressText) progressText.innerText = `50%`;
+            if (progressBar) {
+                progressBar.style.transition = 'none';
+                progressBar.style.width = `50%`;
+            }
+
+
+            progressBar.offsetHeight;
+
+            runProgressAnimation(50, 100, () => {
+                if (loader) loader.classList.add('is-loaded');
+            });
+
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    const target = this.getAttribute('target');
+
+                    if (href && !href.startsWith('#') && !href.startsWith('mailto:') && !href
+                        .startsWith('tel:') && target !== '_blank' && !href.startsWith(
+                            'javascript:')) {
+
+                        e.preventDefault();
+
+                        if (progressText) progressText.innerText = '0%';
+                        if (progressBar) {
+                            progressBar.style.transition = 'none';
+                            progressBar.style.width = '0%';
+                        }
+
+                        if (loader) {
+                            loader.classList.add('is-leaving');
+                            loader.classList.remove('is-loaded');
+
+                            loader.offsetHeight;
+
+
+                            loader.style.transition =
+                                `opacity ${fadeDuration}ms cubic-bezier(0.4, 0, 0.2, 1), filter ${fadeDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+
+
+                            loader.classList.remove('is-leaving');
+                        }
+
+
+                        runProgressAnimation(0, 50, () => {
+                            window.location.href = href;
+                        });
+                    }
+                });
+            });
+        });
+
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                const loader = document.getElementById('page-loader');
+                const progressText = document.getElementById('progress-text');
+                const progressBar = document.getElementById('progress-bar');
+
+
+                if (loader) {
+                    loader.style.transition = 'none';
+                    loader.classList.add('is-loaded');
+                }
+
+                if (progressText) progressText.innerText = '100%';
+                if (progressBar) {
+                    progressBar.style.transition = 'none';
+                    progressBar.style.width = '100%';
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

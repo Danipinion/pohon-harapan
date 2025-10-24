@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('donations', function (Blueprint $table) {
-            $table->string('donor_name')->after('tree_quantity'); // Menambahkan kolom varchar
-            $table->string('donor_email')->after('donor_name');   // Menambahkan kolom varchar lainnya
+            $table->string('donor_name')->after('tree_quantity');
+            $table->string('donor_email')->after('donor_name');
         });
     }
 

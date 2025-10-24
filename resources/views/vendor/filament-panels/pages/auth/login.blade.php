@@ -13,7 +13,6 @@
             </x-slot>
         @endif
 
-        {{-- Ini adalah komponen inti form login dari Filament --}}
         <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-8">
             <x-filament-panels::form.actions :actions="$this->getCachedFormActions()" :full-width="$this->hasFullWidthFormActions()" />
         </div>

@@ -9,17 +9,17 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsOverviewWidget extends BaseWidget
 {
-    protected static ?int $sort = 1; // Menempatkan widget ini di paling atas
+    protected static ?int $sort = 1;
 
     protected function getStats(): array
     {
-        // Menghitung total pohon dari donasi yang sudah lunas
+
         $totalTrees = Donation::where('status', 'paid')->sum('tree_quantity');
 
-        // Menghitung total dana terkumpul
+
         $totalFunds = Donation::where('status', 'paid')->sum('amount');
 
-        // Menghitung jumlah proyek aktif
+
         $activeProjects = Project::where('status', 'active')->count();
 
         return [

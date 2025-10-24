@@ -32,9 +32,9 @@ class ProjectsChart extends ChartWidget
                     'label' => 'Proyek',
                     'data' => $data,
                     'backgroundColor' => [
-                        '#22c55e', // Hijau (Active)
-                        '#1f2937', // Abu-abu tua (Completed)
-                        '#f59e0b', // Kuning (Pending)
+                        '#22c55e',
+                        '#1f2937',
+                        '#f59e0b',
                     ],
                 ],
             ],
@@ -44,6 +44,6 @@ class ProjectsChart extends ChartWidget
 
     protected function getType(): string
     {
-        return 'doughnut'; // Tipe grafik
+        return 'doughnut';
     }
 }

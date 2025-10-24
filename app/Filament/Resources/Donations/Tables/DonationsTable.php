@@ -47,12 +47,12 @@ class DonationsTable
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                // Tambahkan filter di sini
+
                 SelectFilter::make('status')
                     ->options([
                         'pending' => 'Pending',
                         'paid' => 'Paid',
-                        // tambahkan status lain jika ada
+
                     ])
                     ->label('Status Pembayaran'),
 

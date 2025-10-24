@@ -8,11 +8,11 @@ use App\Http\Controllers\DonationController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 
-// Halaman Proyek
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('/projects/{slug}', [ProjectController::class, 'show'])->name('projects.show');
 
-// Proses Donasi
+Route::get('/donasi-random', [ProjectController::class, 'randomProjectRedirect'])->name('donations.random');
+
 Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
 Route::get('/donations/{donation}/checkout', [DonationController::class, 'checkout'])->name('donations.checkout');
 Route::get('/donations/{donation}/instructions', [DonationController::class, 'instructions'])->name('donations.instructions');

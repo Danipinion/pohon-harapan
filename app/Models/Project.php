@@ -30,13 +30,6 @@ class Project extends Model
         ];
     }
 
-    // protected function bodyHtml(): Attribute
-    // {
-    //     return Attribute::get(
-    //         fn() => TiptapConverter::from($this->body)->toHtml(),
-    //     );
-    // }
-
     public function donations()
     {
         return $this->hasMany(Donation::class);

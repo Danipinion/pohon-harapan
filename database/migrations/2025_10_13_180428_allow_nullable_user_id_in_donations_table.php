@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('donations', function (Blueprint $table) {
-            // Ubah kolom user_id agar boleh kosong (nullable)
             $table->foreignId('user_id')->nullable()->change();
         });
     }
@@ -23,7 +22,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('donations', function (Blueprint $table) {
-            // Kembalikan seperti semula jika migrasi di-rollback
             $table->foreignId('user_id')->nullable(false)->change();
         });
     }

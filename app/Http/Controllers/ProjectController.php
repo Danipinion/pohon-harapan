@@ -11,31 +11,42 @@ class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        $activeProjects = Project::where('status', 'active')
-            ->withSum(['donations as total_trees' => function ($query) {
-                $query->where('status', 'paid');
-            }], 'tree_quantity')
+        $search = $request->input('search');
+
+        $sumQuery = function ($query) {
+            $query->where('status', 'paid');
+        };
+
+        $baseQuery = Project::withSum(['donations as total_trees' => $sumQuery], 'tree_quantity');
+
+        if ($search) {
+            $baseQuery->where(function ($query) use ($search) {
+                $query->where('title', 'like', '%' . $search . '%')
+                      ->orWhere('location', 'like', '%' . $search . '%')
+                      ->orWhere('short_description', 'like', '%' . $search . '%');
+            });
+        }
+
+        $activeProjects = (clone $baseQuery)
+            ->where('status', 'active')
             ->latest()
             ->get();
 
-        $completedProjects = Project::where('status', 'completed')
-            ->withSum(['donations as total_trees' => function ($query) {
-                $query->where('status', 'paid');
-            }], 'tree_quantity')
+        $completedProjects = (clone $baseQuery)
+            ->where('status', 'completed')
             ->latest()
             ->get();
 
-        $pendingProjects = Project::where('status', 'pending')
-            ->withSum(['donations as total_trees' => function ($query) {
-                $query->where('status', 'paid');
-            }], 'tree_quantity')
+        $pendingProjects = (clone $baseQuery)
+            ->where('status', 'pending')
             ->latest()
             ->get();
 
         return view('projects.index', compact(
             'activeProjects',
             'completedProjects',
-            'pendingProjects'
+            'pendingProjects',
+            'search'
         ));
     }
 
@@ -46,6 +57,11 @@ class ProjectController extends Controller
                 $query->latest();
             }])
             ->firstOrFail();
+
+        if ($project->status === 'pending') {
+            return redirect()->route('projects.index')
+                         ->with('info', 'Proyek tersebut belum dimulai. Lihat proyek kami yang lain!');
+        }
 
         $totalTrees = $project->donations()->where('status', 'paid')->sum('tree_quantity');
         $co2AbsorptionPerYear = $totalTrees * 25;
@@ -59,5 +75,18 @@ class ProjectController extends Controller
             ->get();
 
         return view('projects.show', compact('project', 'totalTrees', 'co2AbsorptionPerYear', 'progressPercentage', 'topDonors'));
+    }
+
+    public function randomProjectRedirect()
+    {
+        $project = Project::whereIn('status', ['active'])
+                          ->inRandomOrder()
+                          ->first();
+
+        if ($project) {
+            return redirect()->route('projects.show', $project->slug);
+        }
+
+        return redirect()->route('projects.index')->with('info', 'Saat ini belum ada proyek yang membutuhkan donasi.');
     }
 }

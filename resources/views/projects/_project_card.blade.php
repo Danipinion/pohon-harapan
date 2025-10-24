@@ -46,8 +46,6 @@
             </div>
         </div>
     </div>
-
-    {{-- KARTU UNTUK PROYEK SELESAI --}}
 @elseif ($project->status == 'completed')
     <div
         class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full transform hover:-translate-y-2 transition-transform duration-300">
@@ -107,8 +105,6 @@
             </div>
         </div>
     </div>
-
-    {{-- KARTU UNTUK PROYEK MENDATANG (PENDING) --}}
 @elseif ($project->status == 'pending')
     <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
         <div class="relative">
