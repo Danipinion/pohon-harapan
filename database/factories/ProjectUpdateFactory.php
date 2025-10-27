@@ -20,8 +20,7 @@ class ProjectUpdateFactory extends Factory
         return [
             'project_id' => Project::factory(),
             'title' => fake()->sentence(rand(3, 6)),
-            'content' => fake()->paragraphs(2, true),
-            'image_url' => fake()->imageUrl(640, 480, 'nature', true),
+            'content' => fake()->paragraphs(2, true)
         ];
     }
 }
